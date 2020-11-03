@@ -1,6 +1,27 @@
-<h2>TV Show Name: {{show.name}}</h2>
-<h2>Rating: {{show.rating}}</h2>
-<img src="{{show.image}}" alt=""><br>
-{{{show.summary}}}
-<a href="{{show.official_site}}" target="_blank">Official Site</a><br>
-<a href="/">Back</a>
+<div class="row ml-3">
+    <div class="col-9">
+        <div class="media">
+            <img src="{{show.image}}" class="align-self-start mr-3" alt="...">
+            <div class="media-body">
+                <h4 class="mt-0">{{show.name}}</h4>
+                Rating: {{show.rating}}
+                <br><br>
+                {{{show.summary}}}
+                
+                <a class="d-inline btn btn-primary x-3" href="{{show.official_site}}" target="_blank">
+                    <i class="fas fa-link"></i>
+                    Official Site
+                </a>  
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row ml-3 my-3">
+    <div class="col-9">
+        <a class="d-inline btn btn-primary x-3" href="/">
+            <i class="fas fa-home"></i>
+            Home
+        </a><br>  
+    </div>
+</div>

@@ -3,6 +3,8 @@ const express = require('express')
 const handlebars = require('express-handlebars')
 const mysql = require('mysql2/promise')
 
+const r = require('./routes')
+
 // configure environment
 const PORT = parseInt(process.argv[2]) || parseInt(process.env.PORT) || 3000;
 
@@ -17,9 +19,7 @@ const pool = mysql.createPool({
     timezone: '+08:00'
 })
 
-// SQL
-const SQL_GET_TV_SHOW = 'select distinct (name) from tv_shows order by name desc limit ?';
-const SQL_GET_TV_SHOW_BY_NAME = 'select * from tv_shows where name = ?'
+const router = r(pool);
 
 // create express instance
 const app = express();
@@ -29,71 +29,7 @@ app.engine('hbs', handlebars({defaultLayout: 'default.hbs'}))
 app.set('view engine', 'hbs')
 
 // configure routes
-app.get('/', async (req, res) => {
-    const conn = await pool.getConnection();
-
-    try {
-        const results = await conn.query(SQL_GET_TV_SHOW,[30]);
-        console.info('>>>results[0] : ', results[0])
-
-        res.status(200);
-        res.type('text/html');
-        res.render('index', { tvShows: results[0] });
-
-    } catch (e) {
-        res.status(500);
-        res.type('text/html');
-        res.send(JSON.stringify(e));
-        return
-
-    } finally {
-        conn.release();
-    }
-})
-
-app.get('/tvshow/:name', async (req, res) => {
-    
-    const name = req.params['name'];
-    const conn = await pool.getConnection();
-
-    try {
-        const results = await conn.query(SQL_GET_TV_SHOW_BY_NAME,[name]);
-        const recs = results[0]
-
-        if (recs.length <= 0) {
-            //404
-            res.status(404);
-            res.type('text/html');
-            res.send(`Not found : ${name}`);
-            return
-        }
-
-        res.status(200);
-        res.format({
-            'application/json': () => {
-                res.type('application/json');
-                res.json(recs[0])
-            },
-            'text/html': () => {
-                res.type('text/html');
-                res.render('show', { show: recs[0] });
-            },
-            'default': () => {
-                res.type('text/plain');
-                res.send(JSON.stringify(recs[0]));
-            }
-        })
-        
-    } catch (e) {
-        res.status(500);
-        res.type('text/html');
-        res.semd(JSON.stringify(e));
-        return
-
-    } finally {
-        conn.release();
-    }
-})
+app.use(router);
 
 // load static resources
 

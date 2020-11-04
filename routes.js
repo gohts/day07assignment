@@ -6,10 +6,11 @@ const express = require('express')
 const SQL_GET_TV_SHOW = 'select distinct (name) from tv_shows order by name desc limit ?';
 const SQL_GET_TV_SHOW_BY_NAME = 'select * from tv_shows where name = ?'
 
-module.exports = function (p) {
+module.exports = function (p, r) {
 
     const router = express.Router();
     const pool = p;
+    const root = r;
 
     router.get('/', async (req, res) => {
         const conn = await pool.getConnection();
@@ -17,10 +18,11 @@ module.exports = function (p) {
         try {
             const results = await conn.query(SQL_GET_TV_SHOW,[100]);
             console.info('>>>results[0] : ', results[0])
+            console.info('>>>root : ', root)
     
             res.status(200);
             res.type('text/html');
-            res.render('index', { tvShows: results[0] });
+            res.render('index', { tvShows: results[0], root });
     
         } catch (e) {
             res.status(500);
@@ -58,7 +60,7 @@ module.exports = function (p) {
                 },
                 'text/html': () => {
                     res.type('text/html');
-                    res.render('show', { show: recs[0] });
+                    res.render('show', { show: recs[0], root  });
                 },
                 'default': () => {
                     res.type('text/plain');

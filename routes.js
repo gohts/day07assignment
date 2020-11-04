@@ -31,7 +31,7 @@ module.exports = function (p, r) {
 
     const router = express.Router();
     const pool = p;
-    const root = r;
+    const root = r || '';
 
     const getTVList = mkQuery(SQL_GET_TV_SHOW, pool)
     const getTVShowById = mkQuery(SQL_GET_TV_SHOW_BY_NAME, pool)

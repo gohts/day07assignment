@@ -19,7 +19,7 @@ const pool = mysql.createPool({
     timezone: '+08:00'
 })
 
-const router = r(pool, '/v1');
+const router = r(pool);
 
 // create express instance
 const app = express();
@@ -29,7 +29,7 @@ app.engine('hbs', handlebars({defaultLayout: 'default.hbs'}))
 app.set('view engine', 'hbs')
 
 // configure routes
-app.use('/v1',router);
+app.use(router);
 
 // load static resources
 

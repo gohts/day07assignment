@@ -1,27 +1,29 @@
 <div class="row ml-3">
     <div class="col-9">
-        <div class="media">
-            <img src="{{show.image}}" class="align-self-start mr-3" alt="...">
-            <div class="media-body">
-                <h4 class="mt-0">{{show.name}}</h4>
-                Rating: {{show.rating}}
-                <br><br>
+        <div class="row media">
+            <div class="col-2 mr-3">
+                <img src="{{show.image}}" class="align-self-start mr-3" alt="...">
+            </div>
+            <div class="col-9"}>
+                <h3>{{show.name}}</h3>
+                <h5 class="text-info">Rating: <span class="text-body">{{show.rating}}</span></h5>
+                <br>
                 {{{show.summary}}}
-                
-                <a class="d-inline btn btn-primary x-3" href="{{show.official_site}}" target="_blank">
-                    <i class="fas fa-link"></i>
-                    Official Site
-                </a>  
+                <div class="btn-toolbar justify-content-between">
+                    <div class="btn-group">
+                        <a class="d-inline btn btn-info x-3" href="{{show.official_site}}" target="_blank">
+                            <i class="fas fa-link"></i>
+                            Official Site
+                        </a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="d-inline btn btn-warning x-3" href="{{root}}/">
+                            <i class="fas fa-home"></i>
+                            Home
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="row ml-3 my-3">
-    <div class="col-9">
-        <a class="d-inline btn btn-primary x-3" href="{{root}}/">
-            <i class="fas fa-home"></i>
-            Home
-        </a><br>  
     </div>
 </div>

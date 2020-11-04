@@ -1,31 +1,10 @@
 // load libraries
 const express = require('express')
 
+
 // SQL
 const SQL_GET_TV_SHOW = 'select distinct (name) from tv_shows order by name desc limit ?';
 const SQL_GET_TV_SHOW_BY_NAME = 'select * from tv_shows where name = ?'
-
-// create a high level function that takes in sqlStmt, pool
-// returns a function f with params as bound variable, and sqlStmt + pool free variable
-const mkQuery = (sqlStmt, pool) => {
-    const f = async (params) => {
-
-        // get connection from the pool
-        const conn = await pool.getConnection();
-
-        try {
-            const results = await conn.query(sqlStmt, params);
-            return results[0];
-        } catch (e) {
-            return Promise.reject(e);
-        } finally {
-            conn.release();
-        }
-
-    }
-
-    return f;
-}
 
 module.exports = function (p, r) {
 
@@ -33,22 +12,17 @@ module.exports = function (p, r) {
     const pool = p;
     const root = r;
 
-    const getTVList = mkQuery(SQL_GET_TV_SHOW, pool)
-    const getTVShowById = mkQuery(SQL_GET_TV_SHOW_BY_NAME, pool)
-
     router.get('/', async (req, res) => {
-
-        // const conn = await pool.getConnection();
+        const conn = await pool.getConnection();
     
         try {
-            // const results = await conn.query(SQL_GET_TV_SHOW,[100]);
-            const results = await getTVList([100])
-
-            console.info('>>>results : ', results)
+            const results = await conn.query(SQL_GET_TV_SHOW,[100]);
+            console.info('>>>results[0] : ', results[0])
+            console.info('>>>root : ', root)
     
             res.status(200);
             res.type('text/html');
-            res.render('index', { tvShows: results, root });
+            res.render('index', { tvShows: results[0], root });
     
         } catch (e) {
             res.status(500);
@@ -56,18 +30,19 @@ module.exports = function (p, r) {
             res.send(JSON.stringify(e));
             return
     
+        } finally {
+            conn.release();
         }
     })
     
     router.get('/tvshow/:name', async (req, res) => {
-
+        
         const name = req.params['name'];
-        // const conn = await pool.getConnection();
+        const conn = await pool.getConnection();
     
         try {
-            // const results = await conn.query(SQL_GET_TV_SHOW_BY_NAME,[name]);
-            const results = await getTVShowById([name])
-            const recs = results
+            const results = await conn.query(SQL_GET_TV_SHOW_BY_NAME,[name]);
+            const recs = results[0]
     
             if (recs.length <= 0) {
                 //404
@@ -99,6 +74,8 @@ module.exports = function (p, r) {
             res.semd(JSON.stringify(e));
             return
     
+        } finally {
+            conn.release();
         }
     })
 
